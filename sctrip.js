@@ -26,19 +26,22 @@ let introAudioCtx = null;
 let introInterval = null;
 
 function startIntroMelody() {
-    if (!introAudioCtx) {
-        introAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    
-    const notes = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50]; 
-    let noteIndex = 0;
-
-    if (introInterval) clearInterval(introInterval);
-
-    introInterval = setInterval(() => {
-        if (!introAudioCtx || document.getElementById('gameScreen').classList.contains('active')) return;
+    try {
+        if (!introAudioCtx) {
+            introAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (introAudioCtx.state === 'suspended') {
+            introAudioCtx.resume();
+        }
         
-        try {
+        const notes = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50]; 
+        let noteIndex = 0;
+
+        if (introInterval) clearInterval(introInterval);
+
+        introInterval = setInterval(() => {
+            if (!introAudioCtx || document.getElementById('gameScreen').classList.contains('active')) return;
+            
             const osc = introAudioCtx.createOscillator();
             const gain = introAudioCtx.createGain();
 
@@ -54,10 +57,10 @@ function startIntroMelody() {
 
             osc.start();
             osc.stop(introAudioCtx.currentTime + 1.2);
-        } catch (e) {
-            console.log("Intro ses çalma hatası:", e);
-        }
-    }, 600);
+        }, 600);
+    } catch (e) {
+        console.log("Ses bağlamı başlatılamadı:", e);
+    }
 }
 
 function stopIntroMelody() {
@@ -67,29 +70,13 @@ function stopIntroMelody() {
     }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    window.addEventListener('pointerdown', () => {
-        if (introAudioCtx && introAudioCtx.state === 'suspended') {
-            introAudioCtx.resume();
-        }
-    }, { once: true });
-
-    startIntroMelody();
-
-    // 2.5 saniye sonra otomatik ana menüye geçiş
-    setTimeout(() => {
-        const intro = document.getElementById('introScreen');
-        if (intro && intro.classList.contains('active')) {
-            showScreen('menuScreen');
-        }
-    }, 2500);
-
-    renderSongList();
-});
-
-function showScreen(screenId) {
+// Ekran Değiştirme Fonksiyonu (Global yapıldı ki HTML içinden rahatça tetiklensin)
+window.showScreen = function(screenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
+    const targetScreen = document.getElementById(screenId);
+    if (targetScreen) {
+        targetScreen.classList.add('active');
+    }
     
     if (screenId === 'gameScreen') {
         stopIntroMelody();
@@ -102,8 +89,34 @@ function showScreen(screenId) {
     }
 }
 
+window.addEventListener('DOMContentLoaded', () => {
+    // Ekrana ilk dokunuşta hem ses motorunu uyandır hem de garantili olarak ana menüye geçiş yap
+    const introScreen = document.getElementById('introScreen');
+    
+    const handleFirstTouch = () => {
+        startIntroMelody();
+        showScreen('menuScreen');
+    };
+
+    if (introScreen) {
+        introScreen.addEventListener('click', handleFirstTouch);
+        introScreen.addEventListener('touchstart', handleFirstTouch);
+    }
+
+    // 2.5 saniye sonra otomatik geçiş denemesi
+    setTimeout(() => {
+        const intro = document.getElementById('introScreen');
+        if (intro && intro.classList.contains('active')) {
+            showScreen('menuScreen');
+        }
+    }, 2500);
+
+    renderSongList();
+});
+
 function renderSongList() {
     const container = document.getElementById("songListContainer");
+    if (!container) return;
     container.innerHTML = "";
 
     songList.forEach((song, index) => {
@@ -155,7 +168,7 @@ function initGameValues() {
     gameInterval = requestAnimationFrame(updateGame);
 }
 
-function restartGame() {
+window.restartGame = function() {
     if (selectedSong) {
         selectAndStartSong(selectedSong);
     } else {
@@ -261,6 +274,7 @@ function triggerGameOver() {
 
 function updateSongLeaderboard() {
     const listContainer = document.getElementById("songLeaderboardList");
+    if (!listContainer) return;
     
     const mockRankings = [
         { name: "KRI", score: score },
@@ -271,5 +285,5 @@ function updateSongLeaderboard() {
     listContainer.innerHTML = mockRankings.map((player, idx) => `
         <div><strong>${idx + 1}. ${player.name}</strong> - ${player.score} Puan</div>
     `).join('');
-                                      }
-    
+                }
+        
