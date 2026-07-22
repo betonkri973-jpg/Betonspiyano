@@ -22,58 +22,6 @@ const songList = [
 
 const audioPlayer = new Audio();
 
-let introAudioCtx = null;
-let introInterval = null;
-
-function startIntroMelody() {
-    try {
-        if (!introAudioCtx) {
-            introAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (introAudioCtx.state === 'suspended') {
-            introAudioCtx.resume().catch(() => {});
-        }
-        
-        const notes = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50]; 
-        let noteIndex = 0;
-
-        if (introInterval) clearInterval(introInterval);
-
-        introInterval = setInterval(() => {
-            if (!introAudioCtx || document.getElementById('gameScreen').classList.contains('active')) return;
-            
-            try {
-                const osc = introAudioCtx.createOscillator();
-                const gain = introAudioCtx.createGain();
-
-                osc.type = "sine"; 
-                osc.frequency.setValueAtTime(notes[noteIndex % notes.length], introAudioCtx.currentTime);
-                noteIndex++;
-
-                gain.gain.setValueAtTime(0.08, introAudioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, introAudioCtx.currentTime + 1.2);
-
-                osc.connect(gain);
-                gain.connect(introAudioCtx.destination);
-
-                osc.start();
-                osc.stop(introAudioCtx.currentTime + 1.2);
-            } catch (err) {
-                // Ses hatası oyunun akışını asla bozmaz
-            }
-        }, 600);
-    } catch (e) {
-        console.log("Ses motoru desteklenmiyor:", e);
-    }
-}
-
-function stopIntroMelody() {
-    if (introInterval) {
-        clearInterval(introInterval);
-        introInterval = null;
-    }
-}
-
 window.showScreen = function(screenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const targetScreen = document.getElementById(screenId);
@@ -81,29 +29,16 @@ window.showScreen = function(screenId) {
         targetScreen.classList.add('active');
     }
     
-    if (screenId === 'gameScreen') {
-        stopIntroMelody();
-    } else {
-        if (!introInterval && screenId !== 'gameOverScreen') {
-            startIntroMelody();
-        }
+    if (screenId !== 'gameScreen') {
         audioPlayer.pause();
         isPlaying = false;
     }
 }
 
-// Güvenli DOM Yüklenme ve Geçiş Garantisi
+// Sayfa açılır açılmaz hatasız ve direkt ana menüye geçiş garantisi
 window.addEventListener('DOMContentLoaded', () => {
-    startIntroMelody();
-
-    // Hata oluşma ihtimaline karşı try-catch içine alındı ve kesin geçiş sağlanıyor
     setTimeout(() => {
-        try {
-            showScreen('menuScreen');
-        } catch (err) {
-            document.getElementById('introScreen').classList.remove('active');
-            document.getElementById('menuScreen').classList.add('active');
-        }
+        showScreen('menuScreen');
     }, 2300);
 
     renderSongList();
@@ -124,7 +59,6 @@ function renderSongList() {
 }
 
 function selectAndStartSong(song) {
-    stopIntroMelody();
     selectedSong = song;
     showScreen('gameScreen');
 
@@ -280,5 +214,5 @@ function updateSongLeaderboard() {
     listContainer.innerHTML = mockRankings.map((player, idx) => `
         <div><strong>${idx + 1}. ${player.name}</strong> - ${player.score} Puan</div>
     `).join('');
-    }
-        
+}
+    
