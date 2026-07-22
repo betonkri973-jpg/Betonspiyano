@@ -28,28 +28,26 @@ canvas {
     cursor: pointer;
 }
 
+/* Tüm ekranlar varsayılan olarak gizli */
 .screen {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(15, 23, 42, 0.96);
-    display: flex;
+    background: rgba(15, 23, 42, 0.98);
+    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 10;
     text-align: center;
     padding: 20px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s ease;
 }
 
+/* Sadece active olan ekrana flex verilir ve görünür olur */
 .screen.active {
-    opacity: 1;
-    pointer-events: auto;
+    display: flex;
 }
 
 h1 {
@@ -239,5 +237,5 @@ h2 {
 .mini-list div {
     padding: 3px 0;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    
+                                }
+        
