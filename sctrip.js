@@ -70,7 +70,6 @@ function stopIntroMelody() {
     }
 }
 
-// Ekran Değiştirme Fonksiyonu (Global yapıldı ki HTML içinden rahatça tetiklensin)
 window.showScreen = function(screenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const targetScreen = document.getElementById(screenId);
@@ -90,26 +89,12 @@ window.showScreen = function(screenId) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    // Ekrana ilk dokunuşta hem ses motorunu uyandır hem de garantili olarak ana menüye geçiş yap
-    const introScreen = document.getElementById('introScreen');
-    
-    const handleFirstTouch = () => {
-        startIntroMelody();
-        showScreen('menuScreen');
-    };
+    startIntroMelody();
 
-    if (introScreen) {
-        introScreen.addEventListener('click', handleFirstTouch);
-        introScreen.addEventListener('touchstart', handleFirstTouch);
-    }
-
-    // 2.5 saniye sonra otomatik geçiş denemesi
+    // Tam 2.3 saniye sonra hiçbir şeye basmaya gerek kalmadan direkt ana menüye geçer
     setTimeout(() => {
-        const intro = document.getElementById('introScreen');
-        if (intro && intro.classList.contains('active')) {
-            showScreen('menuScreen');
-        }
-    }, 2500);
+        showScreen('menuScreen');
+    }, 2300);
 
     renderSongList();
 });
@@ -285,5 +270,5 @@ function updateSongLeaderboard() {
     listContainer.innerHTML = mockRankings.map((player, idx) => `
         <div><strong>${idx + 1}. ${player.name}</strong> - ${player.score} Puan</div>
     `).join('');
-                }
+                      }
         
