@@ -11,10 +11,9 @@
 
 <div class="game-container">
 
-    <!-- 1. Giriş / Intro Ekranı (Tıklanınca da menüye geçer) -->
-    <div id="introScreen" class="screen active" onclick="showScreen('menuScreen')">
+    <!-- 1. Giriş / Intro Ekranı (Tıklama yok, otomatik geçecek) -->
+    <div id="introScreen" class="screen active">
         <h1 class="intro-title">Beton Archive Sunar</h1>
-        <p class="intro-hint">Devam etmek için dokun</p>
     </div>
 
     <!-- 2. Ana Menü Ekranı -->
@@ -66,7 +65,7 @@
             <p>🔥 Ritim Ustası: 50 skora ulaş</p>
             <p>⚡ Işık Hızı: Hız 8.0 seviyesine ulaş</p>
         </div>
-        <button class="game-btn secondary" onclick="showScreen('menuScreen')">⬅ Menüye Dön</button>
+        <button class="game-btn secondary" onclick="showScreen('menuScreen')">⬅ Menünün Dön</button>
     </div>
 
     <!-- 7. Oyun Ekranı ve Canvas -->
