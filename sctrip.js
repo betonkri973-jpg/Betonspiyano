@@ -31,7 +31,7 @@ function startIntroMelody() {
             introAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
         if (introAudioCtx.state === 'suspended') {
-            introAudioCtx.resume();
+            introAudioCtx.resume().catch(() => {});
         }
         
         const notes = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50]; 
@@ -42,24 +42,28 @@ function startIntroMelody() {
         introInterval = setInterval(() => {
             if (!introAudioCtx || document.getElementById('gameScreen').classList.contains('active')) return;
             
-            const osc = introAudioCtx.createOscillator();
-            const gain = introAudioCtx.createGain();
+            try {
+                const osc = introAudioCtx.createOscillator();
+                const gain = introAudioCtx.createGain();
 
-            osc.type = "sine"; 
-            osc.frequency.setValueAtTime(notes[noteIndex % notes.length], introAudioCtx.currentTime);
-            noteIndex++;
+                osc.type = "sine"; 
+                osc.frequency.setValueAtTime(notes[noteIndex % notes.length], introAudioCtx.currentTime);
+                noteIndex++;
 
-            gain.gain.setValueAtTime(0.08, introAudioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, introAudioCtx.currentTime + 1.2);
+                gain.gain.setValueAtTime(0.08, introAudioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, introAudioCtx.currentTime + 1.2);
 
-            osc.connect(gain);
-            gain.connect(introAudioCtx.destination);
+                osc.connect(gain);
+                gain.connect(introAudioCtx.destination);
 
-            osc.start();
-            osc.stop(introAudioCtx.currentTime + 1.2);
+                osc.start();
+                osc.stop(introAudioCtx.currentTime + 1.2);
+            } catch (err) {
+                // Ses hatası oyunun akışını asla bozmaz
+            }
         }, 600);
     } catch (e) {
-        console.log("Ses motoru hatası:", e);
+        console.log("Ses motoru desteklenmiyor:", e);
     }
 }
 
@@ -88,12 +92,18 @@ window.showScreen = function(screenId) {
     }
 }
 
+// Güvenli DOM Yüklenme ve Geçiş Garantisi
 window.addEventListener('DOMContentLoaded', () => {
     startIntroMelody();
 
-    // 2.3 saniye sonra intro ekranını kapatıp ana menüyü görünür yap
+    // Hata oluşma ihtimaline karşı try-catch içine alındı ve kesin geçiş sağlanıyor
     setTimeout(() => {
-        showScreen('menuScreen');
+        try {
+            showScreen('menuScreen');
+        } catch (err) {
+            document.getElementById('introScreen').classList.remove('active');
+            document.getElementById('menuScreen').classList.add('active');
+        }
     }, 2300);
 
     renderSongList();
@@ -136,7 +146,7 @@ function selectAndStartSong(song) {
             clearInterval(countInterval);
             countdownEl.style.display = "none";
             
-            audioPlayer.play().catch(e => console.log("Ses çalma hatası:", e));
+            audioPlayer.play().catch(e => console.log("Şarkı çalma engellendi:", e));
             initGameValues();
         }
     }, 800);
@@ -270,5 +280,5 @@ function updateSongLeaderboard() {
     listContainer.innerHTML = mockRankings.map((player, idx) => `
         <div><strong>${idx + 1}. ${player.name}</strong> - ${player.score} Puan</div>
     `).join('');
-                                 }
-                                 
+    }
+        
