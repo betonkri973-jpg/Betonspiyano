@@ -10,7 +10,6 @@ const colWidth = 100;
 let tiles = [];
 let selectedSong = null;
 
-// Şarkı Listesi (Dosya Adları ve Görünen İsimler)
 const songList = [
     { name: "Kısa Bir Ara Idol House", file: "kisabiraraih.m4a" },
     { name: "Kısa Bir Ara", file: "kisabirara.m4a" },
@@ -21,10 +20,8 @@ const songList = [
     { name: "Sırılsıklam", file: "sirilsiklam.m4a" }
 ];
 
-// Ses Çalar
 const audioPlayer = new Audio();
 
-// Giriş Ekranı İçin Tatlı Melodi Sentezleyici
 let introAudioCtx = null;
 let introInterval = null;
 
@@ -79,9 +76,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
     startIntroMelody();
 
+    // 2.5 saniye sonra otomatik ana menüye geçiş
     setTimeout(() => {
-        showScreen('menuScreen');
-    }, 2200);
+        const intro = document.getElementById('introScreen');
+        if (intro && intro.classList.contains('active')) {
+            showScreen('menuScreen');
+        }
+    }, 2500);
 
     renderSongList();
 });
@@ -270,4 +271,5 @@ function updateSongLeaderboard() {
     listContainer.innerHTML = mockRankings.map((player, idx) => `
         <div><strong>${idx + 1}. ${player.name}</strong> - ${player.score} Puan</div>
     `).join('');
-}
+                                      }
+    
