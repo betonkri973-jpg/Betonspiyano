@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beton Archive - Magic Tiles</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="game-container">
+
+    <!-- 1. Giriş / Intro Ekranı -->
+    <div id="introScreen" class="screen active">
+        <h1 class="intro-title">Beton Archive Sunar</h1>
+    </div>
+
+    <!-- 2. Ana Menü Ekranı -->
+    <div id="menuScreen" class="screen">
+        <h1>Beton Archive</h1>
+        <p class="subtitle">Magic Tiles Stüdyosu</p>
+        <div class="menu-buttons">
+            <button class="game-btn" onclick="showScreen('songSelectScreen')">🎵 Şarkılar</button>
+            <button class="game-btn" onclick="showScreen('howToPlayScreen')">❓ Nasıl Oynanır</button>
+            <button class="game-btn" onclick="showScreen('leaderboardScreen')">🏆 En Yüksek Puan</button>
+            <button class="game-btn" onclick="showScreen('achievementsScreen')">⭐ Başarımlar</button>
+        </div>
+    </div>
+
+    <!-- 3. Şarkı Seçim Ekranı -->
+    <div id="songSelectScreen" class="screen">
+        <h2>Şarkı Seç</h2>
+        <div class="song-list" id="songListContainer"></div>
+        <button class="game-btn secondary" onclick="showScreen('menuScreen')">⬅ Menüye Dön</button>
+    </div>
+
+    <!-- 4. Nasıl Oynanır Ekranı -->
+    <div id="howToPlayScreen" class="screen">
+        <h2>Nasıl Oynanır?</h2>
+        <div class="info-box">
+            <p>1. Şarkını seç ve ritme hazırlan!</p>
+            <p>2. Yukarıdan kayan mor-mavi piyano tuşlarına dokun.</p>
+            <p>3. Hiçbir tuşu kaçırma, kaçırırsan oyun biter.</p>
+        </div>
+        <button class="game-btn secondary" onclick="showScreen('menuScreen')">⬅ Menüye Dön</button>
+    </div>
+
+    <!-- 5. En Yüksek Puan Ekranı -->
+    <div id="leaderboardScreen" class="screen">
+        <h2>En Yüksek Puanlar</h2>
+        <div class="info-box" id="globalLeaderboard">
+            <p>1. KRI Master - 145 Puan</p>
+            <p>2. Beton Fan - 120 Puan</p>
+            <p>3. Rhythm King - 98 Puan</p>
+        </div>
+        <button class="game-btn secondary" onclick="showScreen('menuScreen')">⬅ Menüye Dön</button>
+    </div>
+
+    <!-- 6. Başarımlar Ekranı -->
+    <div id="achievementsScreen" class="screen">
+        <h2>Başarımlar</h2>
+        <div class="info-box">
+            <p>🏆 İlk Adım: İlk şarkını tamamla</p>
+            <p>🔥 Ritim Ustası: 50 skora ulaş</p>
+            <p>⚡ Işık Hızı: Hız 8.0 seviyesine ulaş</p>
+        </div>
+        <button class="game-btn secondary" onclick="showScreen('menuScreen')">⬅ Menüye Dön</button>
+    </div>
+
+    <!-- 7. Oyun Ekranı ve Canvas -->
+    <div id="gameScreen" class="screen">
+        <div class="scoreboard">Skor: <span id="scoreVal">0</span></div>
+        <div id="guselBanner">güselgüselgüsel</div>
+        <div id="countdownOverlay" class="countdown">3</div>
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+    </div>
+
+    <!-- 8. Oyun Bitti Ekranı -->
+    <div id="gameOverScreen" class="screen">
+        <div id="kriToast" class="kri-toast">İyi işti KRI</div>
+
+        <h2>Krılandın</h2>
+        <div class="final-score-box">
+            <p>Toplam Skorun: <span id="finalScore">0</span></p>
+            <p class="song-title-display">Şarkı: <span id="playedSongTitle">-</span></p>
+        </div>
+
+        <div class="song-leaderboard">
+            <h3>Şarkı Sıralaması</h3>
+            <div id="songLeaderboardList" class="mini-list"></div>
+        </div>
+
+        <button class="game-btn" onclick="restartGame()">🔄 Yeniden Dene</button>
+        <button class="game-btn secondary" onclick="showScreen('menuScreen')">🏠 Ana Menü</button>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+  </html>
+  
