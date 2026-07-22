@@ -59,7 +59,7 @@ function startIntroMelody() {
             osc.stop(introAudioCtx.currentTime + 1.2);
         }, 600);
     } catch (e) {
-        console.log("Ses bağlamı başlatılamadı:", e);
+        console.log("Ses motoru hatası:", e);
     }
 }
 
@@ -91,7 +91,7 @@ window.showScreen = function(screenId) {
 window.addEventListener('DOMContentLoaded', () => {
     startIntroMelody();
 
-    // Tam 2.3 saniye sonra hiçbir şeye basmaya gerek kalmadan direkt ana menüye geçer
+    // 2.3 saniye sonra intro ekranını kapatıp ana menüyü görünür yap
     setTimeout(() => {
         showScreen('menuScreen');
     }, 2300);
@@ -270,5 +270,5 @@ function updateSongLeaderboard() {
     listContainer.innerHTML = mockRankings.map((player, idx) => `
         <div><strong>${idx + 1}. ${player.name}</strong> - ${player.score} Puan</div>
     `).join('');
-                      }
-        
+                                 }
+                                 
